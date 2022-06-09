@@ -95,7 +95,7 @@ etd
 Install Mysql and ETD on the target server
 
 ```
-ansible-playbook -i inventory etd_provision.yml -e"rails_env=production app_domain=yourdomain.ca mysql_root_password=db_root_password mysql_host=localhost mysql_user=etd mysql_password=etd_db_password" --limit etd 
+ansible-playbook -i inventory app_provision.yml -e"rails_env=production app_domain=yourdomain.ca mysql_root_password=db_root_password mysql_host=localhost mysql_user=etd mysql_password=etd_db_password" --limit etd 
 ```
 
 **Don't forget to set the search API keys as explained above.**
