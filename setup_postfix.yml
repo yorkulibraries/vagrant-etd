@@ -1,0 +1,34 @@
+---
+- name: setup postfix 
+  hosts: all
+  roles:
+    - { role: geerlingguy.postfix }
+  vars_files:
+    - vars/postfix.yml
+  become: yes
+  gather_facts: yes
+
+  tasks:
+
+  - name: set relayhost in /etc/postfix/main.cf
+    lineinfile:
+      dest: /etc/postfix/main.cf
+      regex: '^relayhost ='
+      line: "relayhost = {{ postfix_relayhost }}"
+      state: present
+    notify: restart postfix
+
+  - name: set myhostname in /etc/postfix/main.cf
+    lineinfile:
+      dest: /etc/postfix/main.cf
+      regex: '^myhostname ='
+      line: "myhostname = {{ postfix_myhostname }}"
+      state: present
+
+  handlers:
+    - name: restart postfix
+      systemd:
+        name: postfix
+        state: restarted
+        enabled: yes
+

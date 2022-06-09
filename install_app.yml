@@ -1,0 +1,77 @@
+---
+- name: Install app
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+
+  - name: Adding user {{ app }} to group vagrant
+    user: name={{ app }}
+      groups=vagrant
+      append=yes
+    when: not rails_env == 'production'
+
+  - block:
+
+    - name: stat "/home/{{ app }}/{{ app }}/config/secrets.yml" 
+      stat:
+        path: "/home/{{ app }}/{{ app }}/config/secrets.yml"
+      register: app_secrets_yml
+
+    - name: configure "/vagrant/{{ app }}" as safe for git
+      git_config:
+        name: safe.directory
+        scope: global
+        value: "/vagrant/{{ app }}"
+      when: rails_env != 'production' and not app_secrets_yml.stat.exists
+
+    - name: symlink /vagrant/{{ app }} to /home/{{ app }}/{{ app }}
+      file:
+        src: /vagrant/{{ app }}
+        dest:  /home/{{ app }}/{{ app }}
+        state: link
+      when: rails_env != 'production' and not app_secrets_yml.stat.exists
+
+    become: yes
+    become_user: "{{ app }}"
+
+  - name: add Basic Auth to apache config
+    blockinfile:
+      path: "/etc/apache2/sites-available/{{ app }}.{{ app_domain }}.conf"
+      insertbefore: "</VirtualHost>"
+      block: "{{ lookup('file', 'templates/apache_auth_basic') }}"
+    notify: restart apache2
+
+  - name: add Basic Auth to apache config ssl
+    blockinfile:
+      path: "/etc/apache2/sites-available/{{ app }}.{{ app_domain }}-ssl.conf"
+      insertbefore: "</VirtualHost>"
+      block: "{{ lookup('file', 'templates/apache_auth_basic') }}"
+    notify: restart apache2
+
+  - name: install python3-passlib
+    apt:
+      pkg: 
+      - python3-passlib
+
+  - name: Add a default admin user to "/etc/apache2/htpasswd"
+    community.general.htpasswd:
+      path: "/etc/apache2/htpasswd"
+      name: "{{item}}"
+      password: "demo"
+      owner: root
+      group: www-data
+      mode: 0640
+    with_items: ['admin','manager','stu1','stu2']
+
+  handlers:
+  - name: restart apache2
+    systemd:
+      state: restarted
+      name: apache2
+      enabled: yes
+
+
+- import_playbook: ansible-rails/install_rails_app.yml 
+

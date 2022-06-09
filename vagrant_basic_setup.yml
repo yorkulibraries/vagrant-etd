@@ -1,0 +1,43 @@
+- name: vagrant basic setup
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  pre_tasks:
+  - name: update apt cache
+    apt:
+      update_cache: yes
+      cache_valid_time: 36000
+
+  tasks:
+
+    - name: install a bunch of basic util packages 
+      apt:
+        pkg:
+        - ntp
+        - htop
+        - mailutils
+        - acl
+
+    - name: Set the timezone to America/Toronto 
+      timezone: "name=America/Toronto"
+
+    - name: Make sure ntp is started, and is enabled on restart.
+      service: name=ntp state=started enabled=yes
+
+    - name: copy /etc/skel/.bash_aliases
+      copy:
+        src: etc/skel/.bash_aliases
+        dest: /etc/skel/.bash_aliases
+        owner: root
+        group: root
+        mode: u=rw,g=r,o=r
+
+    - name: copy /home/vagrant/.bash_aliases
+      copy:
+        src: etc/skel/.bash_aliases
+        dest: /home/vagrant/.bash_aliases
+        owner: vagrant
+        group: vagrant
+        mode: u=rw,g=r,o=r
+

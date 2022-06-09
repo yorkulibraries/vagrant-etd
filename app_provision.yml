@@ -1,0 +1,10 @@
+- name: app provision
+  hosts: all
+  become: yes
+  tasks: 
+    - include_vars: vars/app.yml
+
+- import_playbook: setup_postfix.yml
+- import_playbook: ansible-rails/add_rails_app.yml 
+- import_playbook: install_app.yml 
+

@@ -1,0 +1,21 @@
+  <Location />
+    AuthType Basic
+    AuthName "Auth"
+    AuthUserFile /etc/apache2/htpasswd
+    Require valid-user
+
+    RequestHeader unset HTTP_REMOTE_USER
+    RequestHeader unset HTTP_PYORK_USER
+    RequestHeader unset HTTP_PYORK_CYIN
+    RequestHeader unset HTTP_PYORK_EMAIL
+
+    RewriteEngine on
+    RewriteCond %{LA-U:REMOTE_USER} (.+)
+    RewriteRule . - [E=RU:%1]
+
+    RequestHeader set REMOTE_USER %{RU}e
+    RequestHeader set PYORK_USER %{RU}e
+    RequestHeader set PYORK_CYIN %{RU}e
+    RequestHeader set PYORK_EMAIL %{RU}e
+  </Location>
+

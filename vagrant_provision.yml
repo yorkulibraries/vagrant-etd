@@ -1,0 +1,3 @@
+---
+- import_playbook: vagrant_basic_setup.yml
+- import_playbook: app_provision.yml
