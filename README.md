@@ -86,16 +86,16 @@ The following steps will install/configure MYSQL and ETD on that server.
 
 Create an **inventory** file with the name/IP address of the remote server, similar to the one below:
 ```
-etd    ansible_host=192.168.168.168
+me    ansible_host=192.168.168.168
 
 [rails_app_servers]
-etd
+me
 ```
 
 Install Mysql and ETD on the target server
 
 ```
-ansible-playbook -i inventory app_provision.yml -e"rails_env=production app_domain=yourdomain.ca mysql_root_password=db_root_password mysql_host=localhost mysql_user=etd mysql_password=etd_db_password" --limit etd 
+ansible-playbook -i inventory app_provision.yml -e"rails_env=production app_domain=yourdomain.ca mysql_root_password=db_root_password mysql_host=localhost mysql_user=etd mysql_password=etd_db_password" --limit me 
 ```
 
 **Don't forget to set the search API keys as explained above.**
