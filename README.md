@@ -34,13 +34,7 @@ ansible-galaxy install -r requirements.yml
 Bring up the box with RAILS_ENV=development (this is the default):
 
 ```
-APP=etd vagrant up
-```
-
-If you want to bring the box up with RAILS_ENV=production, then specify the environment variable when you run vagrant up:
-
-```
-APP=etd RAILS_ENV=production vagrant up
+vagrant up
 ```
 
 Watch for any error/failed tasks. If all is good then the instance is ready to use for testing.
