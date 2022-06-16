@@ -53,6 +53,10 @@ Edit /etc/hosts and add an entry like followed so you can access the app from a 
 192.168.168.168 etd.me.ca
 ```
 
+## Verifying emails are sent in development
+
+In development environment, mails are "caught" by MailCatcher. You can see all the emails by going to the MailCatcher web interface at http://papyrus.me.ca:1080/
+
 ## Making changes
 
 **NOTE: Assuming you have provisioned the box with the default RAILS_ENV=development.**
@@ -70,6 +74,14 @@ ssh etd@127.0.0.1 -p2222
 cd etd
 RAILS_ENV=test bundle exec rake db:reset
 RAILS_ENV=test bundle exec rake test
+```
+
+## Provision a vagrant box with RAILS_ENV=production
+
+If you want to bring the box up with RAILS_ENV=production, then specify the environment variable when you run vagrant up:
+
+```
+RAILS_ENV=production vagrant up
 ```
 
 ## Provisioning ETD on a remote server/VM
@@ -91,8 +103,6 @@ Install Mysql and ETD on the target server
 ```
 ansible-playbook -i inventory app_provision.yml -e"rails_env=production app_domain=yourdomain.ca mysql_root_password=db_root_password mysql_host=localhost mysql_user=etd mysql_password=etd_db_password" --limit me 
 ```
-
-**Don't forget to set the search API keys as explained above.**
 
 ## About ETD
 Take a look at [ETD](https://github.com/yorkulibraries/etd) repo for ETD code.
