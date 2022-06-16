@@ -1,5 +1,6 @@
+app = ENV['APP'] || 'etd'
+
 rails_env = ENV['RAILS_ENV'] || 'development'
-app = ENV['APP'] || 'app'
 
 Vagrant.configure("2") do |config|
   config.vm.hostname = "vagrant"
