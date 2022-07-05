@@ -55,7 +55,7 @@ Edit /etc/hosts and add an entry like followed so you can access the app from a 
 
 ## Verifying emails are sent in development
 
-In development environment, mails are "caught" by MailCatcher. You can see all the emails by going to the MailCatcher web interface at http://papyrus.me.ca:1080/
+In development environment, mails are "caught" by MailCatcher. You can see all the emails by going to the MailCatcher web interface at http://etd.me.ca:1080/
 
 ## Making changes
 
