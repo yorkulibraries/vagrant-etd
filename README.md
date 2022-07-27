@@ -57,26 +57,6 @@ Edit /etc/hosts and add an entry like followed so you can access the app from a 
 
 In development environment, mails are "caught" by MailCatcher. You can see all the emails by going to the MailCatcher web interface at http://etd.me.ca:1080/
 
-## Set search API keys
-
-Reserves can search Worldcat and Alma/PrimoVE for bibliographic records. To make this work, you will need API keys for each of these services.
-
-You can create a file with the search API keys (see vars/api_keys.yml for example), then run the playbook set_api_keys.yml to set them in the Reserves database.
-
-Note you must specify the rails_env variable to be the same as the one you have provisioned the box with.
-
-If the file is encrypted, you will need to specify the Ansible Vault password. For example, at YUL, the file vars/yul_keys.yml is encrypted, you will run the following:
-
-```
-ansible-playbook set_api_keys.yml -e"app=reserves rails_env=development apikeys=vars/yul_keys.yml" --ask-vault-pass
-```
-
-If the file is **not** encrypted and your API keys file is var/my_keys.yml, you will run the following:
-
-```
-ansible-playbook set_api_keys.yml -e"app=reserves rails_env=development apikeys=vars/my_keys.yml"
-```
-
 ## Making changes
 
 **NOTE: Assuming you have provisioned the box with the default RAILS_ENV=development.**
