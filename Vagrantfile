@@ -21,8 +21,7 @@ Vagrant.configure("2") do |config|
   end 
 
   if rails_env == 'development'
-    config.vm.synced_folder "#{app}", "/vagrant/#{app}", mount_options: ["dmode=775,fmode=664"]
-    config.vm.synced_folder "#{app}/bin", "/vagrant/#{app}/bin", mount_options: ["dmode=775,fmode=775"]
+      config.vm.synced_folder "#{app}", "/home/#{app}/#{app}", create: true, mount_options: ["dmode=775,fmode=664"], fsnotify: true
   end
 
 end

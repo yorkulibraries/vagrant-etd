@@ -19,51 +19,37 @@
         path: "/home/{{ app }}/{{ app }}/config/secrets.yml"
       register: app_secrets_yml
 
-    - name: configure "/vagrant/{{ app }}" as safe for git
-      git_config:
-        name: safe.directory
-        scope: global
-        value: "/vagrant/{{ app }}"
-      when: rails_env != 'production' and not app_secrets_yml.stat.exists
+    - name: stat "/home/{{ app }}/app"
+      stat:
+        path: "/home/{{ app }}/{{ app }}"
+      register: home_app_app
 
-    - name: symlink /vagrant/{{ app }} to /home/{{ app }}/{{ app }}
-      file:
-        src: /vagrant/{{ app }}
-        dest:  /home/{{ app }}/{{ app }}
-        state: link
-      when: rails_env != 'production' and not app_secrets_yml.stat.exists
+    - name: gem install rails
+      shell: /home/{{ app }}/.rbenv/shims/gem install rails
+      register: gem_install_rails
+      changed_when: gem_install_rails.stdout is search('Fetching')
+      when: rails_env != 'production' and not home_app_app.stat.exists
+
+    - name: "rails new {{ app }}"
+      shell: cd /home/{{ app }} && /home/{{ app }}/.rbenv/shims/rails new {{ app }}
+      register: rails_new_app
+      when: rails_env != 'production' and not home_app_app.stat.exists
 
     become: yes
     become_user: "{{ app }}"
 
-  - name: add Basic Auth to apache config
+  - name: add extra apache config to apache
     blockinfile:
-      path: "/etc/apache2/sites-available/{{ app }}.{{ app_domain }}.conf"
-      insertbefore: "</VirtualHost>"
-      block: "{{ lookup('file', 'templates/apache_auth_basic') }}"
+      path: "/etc/apache2/sites-available/{{ vhost }}.conf"
+      insertafter: "CustomLog"
+      block: "{{ lookup('file', 'templates/apache.conf') }}"
     notify: restart apache2
-
-  - name: add Basic Auth to apache config ssl
-    blockinfile:
-      path: "/etc/apache2/sites-available/{{ app }}.{{ app_domain }}-ssl.conf"
-      insertbefore: "</VirtualHost>"
-      block: "{{ lookup('file', 'templates/apache_auth_basic') }}"
-    notify: restart apache2
+    when: extra_apache_conf
 
   - name: install python3-passlib
     apt:
       pkg: 
       - python3-passlib
-
-  - name: Add a default admin user to "/etc/apache2/htpasswd"
-    community.general.htpasswd:
-      path: "/etc/apache2/htpasswd"
-      name: "{{item}}"
-      password: "demo"
-      owner: root
-      group: www-data
-      mode: 0640
-    with_items: ['admin','manager','stu1','stu2']
 
   handlers:
   - name: restart apache2
@@ -73,5 +59,4 @@
       enabled: yes
 
 
-- import_playbook: ansible-rails/install_rails_app.yml 
-
+- import_playbook: ansible-rails/install_rails_app.yml

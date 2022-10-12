@@ -1,7 +1,9 @@
 app: etd
 app_domain: me.ca
 puma_port: 3001
-ruby_version: 2.6.9
+ruby_version: 3.1.2
 rails_env: development
 repo_branch: master 
-repo: https://github.com/yorkulibraries/etd.git
+repo: "https://github.com/yorkulibraries/{{app}}.git"
+extra_apache_conf: true
+vhost: "{{ app }}.{{ app_domain }}"

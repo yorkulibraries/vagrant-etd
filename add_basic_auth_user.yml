@@ -1,0 +1,13 @@
+---
+- name: Add apache basic auth user
+  hosts: all
+  become: yes
+  gather_facts: yes
+
+  tasks:
+
+  - name: Add a default admin user to "/etc/apache2/htpasswd"
+    community.general.htpasswd:
+      path: "/etc/apache2/htpasswd"
+      name: "{{user}}"
+      password: "{{password}}"
