@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
   end 
 
   if rails_env == 'development'
-      config.vm.synced_folder "#{app}", "/home/#{app}/#{app}", create: true, mount_options: ["dmode=775,fmode=664"], fsnotify: true
+      config.vm.synced_folder "#{app}", "/home/#{app}/#{app}", create: true, mount_options: ["dmode=775,fmode=664"], fsnotify: true, exclude: ["development.sqlite3", "development.sqlite3-journal", "test.sqlite3", "test.sqlite3-journal"]
   end
 
 end
